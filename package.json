@@ -1,7 +1,10 @@
 {
   "dependencies": {
+    "@types/express": "^4.17.1",
+    "@types/node": "^12.7.4",
     "apollo-server": "^2.9.3",
-    "graphql": "^14.5.4"
+    "graphql": "^14.5.4",
+    "typescript": "^3.6.2"
   },
   "scripts": {
     "start": "node ./build/main.js",
@@ -9,9 +12,9 @@
     "build": "backpack build"
   },
   "devDependencies": {
+    "@types/graphql": "^14.5.0",
     "awesome-typescript-loader": "^5.2.1",
     "backpack-core": "^0.8.4",
-    "nodemon": "^1.19.2",
-    "@types/graphql": "^14.5.0"
+    "nodemon": "^1.19.2"
   }
 }
