@@ -8,7 +8,6 @@ import {
 } from "apollo-server-micro";
 import * as jwt from "jsonwebtoken";
 import Mongoose from "mongoose";
-import * as Joi from "@hapi/joi";
 import * as bcrypt from "bcrypt";
 import uuid from "uuid/v4";
 import { draftToMarkdown } from "markdown-draft-js";
@@ -24,7 +23,7 @@ const Config = {
   dbCreds: `mongodb://${process.env.MONGO_URL || address}`
 };
 
-export const prepareDB = async (): Promise<typeof Mongoose> => {
+const prepareDB = async (): Promise<typeof Mongoose> => {
   (<any>Mongoose).Promise = global.Promise;
   const m = await Mongoose.connect(Config.dbCreds, { useNewUrlParser: true });
 
@@ -55,7 +54,7 @@ const PostSchema = new Mongoose.Schema({
   user: { type: Mongoose.Schema.Types.ObjectId, ref: "User" }
 });
 
-export interface IPost extends Mongoose.Document {
+interface IPost extends Mongoose.Document {
   id: string;
   title: string;
   author: string;
@@ -67,19 +66,8 @@ export interface IPost extends Mongoose.Document {
   user: any;
 }
 
-export const PostModel: Mongoose.Model<IPost> =
+const PostModel: Mongoose.Model<IPost> =
   Mongoose.models.Post || Mongoose.model<IPost>("Post", PostSchema);
-
-export const validPost = {
-  id: Joi.string(),
-  title: Joi.string(),
-  content: Joi.object(),
-  tags: Joi.array(),
-  dateAdded: Joi.date(),
-  dateModified: Joi.date(),
-  user: Joi.string(),
-  public: Joi.boolean()
-};
 
 const UserSchema = new Mongoose.Schema({
   username: { type: String, required: true, index: { unique: true } },
@@ -100,28 +88,6 @@ export interface IUser extends Mongoose.Document {
   posts: IPost[];
   gradient?: string[];
 }
-
-// 1. must contain 1 lowercase letter
-// 2. must contain 1 uppercase letter
-// 3. must contain 1 numeric character
-// 4. must contain 1 special character
-// 5. must contain 6 characters
-
-const validPassword = Joi.string().regex(
-  /^(((?=.*[a-z])(?=.*[A-Z]))|((?=.*[a-z])(?=.*[0-9]))|((?=.*[A-Z])(?=.*[0-9])))(?=.{6,})/
-);
-
-export const validUser = {
-  username: Joi.string()
-    .alphanum()
-    .min(2)
-    .max(30)
-    .required(),
-  email: Joi.string()
-    .email()
-    .required(),
-  password: validPassword.required()
-};
 
 function createMarkdown(content: Draft.RawDraftContentState | string): string {
   if (is.string(content)) {
