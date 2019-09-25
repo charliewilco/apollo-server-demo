@@ -1,0 +1,19 @@
+{
+  "version": 2,
+  "builds": [
+    {
+      "src": "api/index.ts",
+      "use": "@now/node",
+      "config": {
+        "includeFiles": ["*.graphql"]
+      }
+    }
+  ],
+  "routes": [
+    { "src": "/.*", "dest": "api/index.ts" },
+    {
+      "src": "/*.graphql",
+      "dest": "api/schema.graphql"
+    }
+  ]
+}
